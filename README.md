@@ -378,6 +378,5 @@ si tienes dudas existenciales con respecto a estas decisiones. No existe una
 - [ ] Puedes agregar más estadísticas.
 - [ ] Integración continua con Travis o Circle CI.
 
-#Diagrama de flujo
-
-![Diagrama de flujo MD-LINKS](https://lh3.googleusercontent.com/6V_NBM0OfyLHBJeSLO5blgvsu8f3X0G6TTy2LfNisEJ0kJuOgPw8BJ8Rnb65Wlj-FOXCX2VJB2_w "Diagrama de flujo")
+# Diagrama de flujo md-links
+![Diagrama de flujo md-links](https://lh3.googleusercontent.com/Jyigqao4sDfSwQBKn8GTppemkjSbXe8qoL9nNYh9qJ8pK4csIo_J-aral0fQES46XvNK14H8oS_F "Diagrama de flujo")
