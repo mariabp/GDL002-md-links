@@ -377,3 +377,7 @@ si tienes dudas existenciales con respecto a estas decisiones. No existe una
 - [ ] Puedes agregar la propiedad line a cada objeto link indicando en qué línea del archivo se encontró el link.
 - [ ] Puedes agregar más estadísticas.
 - [ ] Integración continua con Travis o Circle CI.
+
+#Diagrama de flujo
+
+![Diagrama de flujo MD-LINKS](https://lh3.googleusercontent.com/6V_NBM0OfyLHBJeSLO5blgvsu8f3X0G6TTy2LfNisEJ0kJuOgPw8BJ8Rnb65Wlj-FOXCX2VJB2_w "Diagrama de flujo")
