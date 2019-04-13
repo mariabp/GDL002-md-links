@@ -379,4 +379,4 @@ si tienes dudas existenciales con respecto a estas decisiones. No existe una
 - [ ] Integración continua con Travis o Circle CI.
 
 # Diagrama de flujo md-links
-![Diagrama de flujo md-links](https://lh3.googleusercontent.com/Jyigqao4sDfSwQBKn8GTppemkjSbXe8qoL9nNYh9qJ8pK4csIo_J-aral0fQES46XvNK14H8oS_F "Diagrama de flujo")
+![Diagrama de flujo md-links](https://lh3.googleusercontent.com/jIIuSaDDLZmVBLsCfUu3Gg_oW5sjLZ70jT69080hf4ThTqtfH0t-mYegB_y85g_186fyPrtXnZgd "md-links")
