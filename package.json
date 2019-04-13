@@ -2,6 +2,11 @@
   "name": "md-links",
   "version": "0.1.0",
   "author": "Maria Bolaños/Laboratoria GDL002",
+  "scripts": {
+    "eslint": "eslint --ext .js src/ test/",
+    "pretest": "npm run eslint && npm run htmlhint",
+    "test": "jest --coverage"
+  },
   "devDependencies": {
     "eslint": "^5.16.0",
     "eslint-config-standard": "^12.0.0",
@@ -12,3 +17,5 @@
     "jest": "^24.7.1"
   }
 }
+
+
