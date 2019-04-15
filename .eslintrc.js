@@ -9,7 +9,7 @@ module.exports = {
       'SharedArrayBuffer': 'readonly'
     },
     'parserOptions': {
-      'ecmaVersion': 2018,
+      'ecmaVersion': 6,
       'sourceType': 'module'
     },
     'rules': {
@@ -33,7 +33,7 @@ module.exports = {
         "spaced-comment": 1,
         "quotes": [1, "single"],
         "id-length": [1, { "exceptions": ["i", "j", "x"] }],
-        "indent": [1, 2],
+        "indent": ["error", "tab"],
         "no-array-constructor": 1
     }
   }

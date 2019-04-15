@@ -23,7 +23,7 @@
     "spaced-comment": 1,
     "quotes": [1, "single"],
     "id-length": [1, { "exceptions": ["i", "j", "x"] }],
-    "indent": [1, 2],
+    "indent": [1, 4],
     "no-array-constructor": 1
   }
 }
