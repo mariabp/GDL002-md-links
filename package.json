@@ -2,6 +2,10 @@
   "name": "md-links",
   "version": "0.1.0",
   "author": "Maria Bolaños/Laboratoria GDL002",
+  "main": "index.js",
+  "bin": {
+    "md-links": "./cli.js"
+  },
   "scripts": {
     "eslint": "eslint --ext .js src/ test/",
     "pretest": "npm run eslint && npm run htmlhint",
