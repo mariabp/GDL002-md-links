@@ -89,49 +89,49 @@ module.exports = (givenPath, options) => {
 
 	};
 
-	const validateArguments = () => {
+	const validatePath = () => {
 
-		const validatePath = () => {
+		if (givenPath === undefined) {
 
-			if (givenPath === undefined) {
+			console.log(errors.noFilePath);
 
-				console.log(errors.noFilePath);
+		} else if (path.isAbsolute(givenPath)) {
 
-			} else if (path.isAbsolute(givenPath)) {
+			let absolutePath = givenPath;
 
-				let absolutePath = givenPath;
+			console.log(`\n\t${absolutePath}\n`);
 
-				console.log(`\n\t${absolutePath}\n`);
+			if (/(\w)+:/.test(absolutePath)) {
 
-				if (/(\w)+:/.test(absolutePath)) {
-
-					path.normalize(absolutePath);
-
-				}
-
-				if (path.extname(absolutePath) === '.md') {
-
-					getFileLinks(absolutePath);
-
-				} else if (path.extname(absolutePath) === '') {
-
-					getDirectoryFiles(absolutePath);
-
-				} else {
-
-					console.log(errors.markdownFilesOnly);
-
-				}
-
-			} else {
-
-				console.log(errors.noValidPath);
+				path.normalize(absolutePath);
 
 			}
 
-		};
+			if (path.extname(absolutePath) === '.md') {
 
-		validatePath(givenPath);
+				getFileLinks(absolutePath);
+
+			} else if (path.extname(absolutePath) === '') {
+
+				getDirectoryFiles(absolutePath);
+
+			} else {
+
+				console.log(errors.markdownFilesOnly);
+
+			}
+
+		} else {
+
+			console.log(errors.noValidPath);
+
+		}
+
+	};
+
+	validatePath(givenPath);
+
+	const validateOptions = () => {
 
 		if (options.length > 0) {
 
@@ -149,10 +149,10 @@ module.exports = (givenPath, options) => {
 
 			});
 
-		}
+		};
+
+		validateOptions;
 
 	};
-
-	validateArguments(givenPath, options);
 
 };
