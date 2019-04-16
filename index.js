@@ -89,7 +89,6 @@ module.exports = (givenPath, options) => {
 
 	};
 
-
 	const validateArguments = () => {
 
 		const validatePath = () => {
