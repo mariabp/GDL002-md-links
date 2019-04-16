@@ -2,9 +2,9 @@
   "name": "md-links",
   "version": "0.1.0",
   "author": "Maria Bolaños/Laboratoria GDL002",
-  "main": "index.js",
+  "main": "bin/cli.js",
   "bin": {
-    "md-links": "./cli.js"
+    "md-links": "bin/cli.js"
   },
   "scripts": {
     "eslint": "eslint --ext .js src/ test/",
