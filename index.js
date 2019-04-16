@@ -8,7 +8,7 @@ module.exports = (givenPath, options) => {
 
 		noFilePath:
 
-			`\n\tYou must provide the path to a markdown (*.md) file.\n`,
+			`\n\tYou must provide a path to a markdown (*.md) file.\n`,
 
 		noValidPath:
 
@@ -51,7 +51,7 @@ module.exports = (givenPath, options) => {
 
 				fileList.forEach((file) => {
 
-					console.log(`\t${element}`);
+					console.log(`\t${file}`);
 
 				});
 
