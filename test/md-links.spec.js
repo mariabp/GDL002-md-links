@@ -1,24 +1,20 @@
-const mdLinks = require('../index.js ');
+const mdLinks = require('../src/index');
 
-describe('mdLinks', () => {
-
-	it('should be an object ', () => {
-
-		console.log('FIX ME!');
-
-	});
-
-});
-
+/*
 describe('validatePath', () => {
 
-	it('should be a function ', () => {
+	it('should return an error if path is undefined', ()=>{
 
-		console.log('absolutePath');
+		path.validatePath("").then(result => {
+
+			expect(result).toEqual('You must provide a path to a markdown (*.md) file.');
+
+		});
 
 	});
 
 });
+
 
 describe('filterMdFiles', () => {
 
@@ -60,4 +56,4 @@ describe('validateLinks', () => {
 
 });
 
-
+*/
