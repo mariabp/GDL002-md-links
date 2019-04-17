@@ -31,7 +31,6 @@ module.exports = {
         "space-before-blocks": 1,
         "space-in-parens": 1,
         "spaced-comment": 1,
-        "quotes": [1, "single"],
         "id-length": [1, { "exceptions": ["i", "j", "x"] }],
         "indent": ["error", "tab"],
         "no-array-constructor": 1
