@@ -1,13 +1,15 @@
 const mdLinks = require('../src/index');
+const fs = require('../src/index');
+const path = require('../src/index');
+const validatePath = require('../src/index');
 
-/*
 describe('validatePath', () => {
 
-	it('should return an error if path is undefined', ()=>{
+	it('should return an error if path is undefined', () => {
 
-		path.validatePath("").then(result => {
+		validatePath('').then(result => {
 
-			expect(result).toEqual('You must provide a path to a markdown (*.md) file.');
+			expect(result).toBe('You must provide a path to a markdown (*.md) file.');
 
 		});
 
@@ -15,7 +17,7 @@ describe('validatePath', () => {
 
 });
 
-
+/*
 describe('filterMdFiles', () => {
 
 	it('should be a function ', () => {
