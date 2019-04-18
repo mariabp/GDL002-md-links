@@ -7,6 +7,8 @@ module.exports = (givenPath, options) => {
 	let linkCollection = [];
 	let filteredFiles = [];
 	let linkInfo = [];
+	let matchedLinks = [];
+	let parsedLinksCollection = [];
 
 	const readDir = (absolutePath) => {
 
@@ -56,7 +58,13 @@ module.exports = (givenPath, options) => {
 
 		const matchLinks = /\[([^[])+\]\(([^)])+\)/giu;
 
-		let matchedLinks = file.match(matchLinks);
+		matchedLinks = file.match(matchLinks);
+
+		return matchedLinks;
+
+	};
+
+	const parseLinks = (matchedLinks) => {
 
 		linkCollection = matchedLinks.map((link) => {
 
@@ -68,13 +76,36 @@ module.exports = (givenPath, options) => {
 
 			let linkString = linkURL.toString();
 
-			linkInfo = [linkText, linkString];
+			parsedLinksCollection.push({linkText, linkURL, linkString});
 
-			return linkInfo;
+			return parsedLinksCollection;
 
 		});
 
 		console.log(`\t${linkCollection.length} links were found in total.\n`);
+
+	};
+
+	const linksToLink = (parsedLinksCollection) => {
+
+		parsedLinksCollection.forEach((link) => {
+
+			validateLink(link.linkString)
+
+				.then((response) => {
+
+					console.log(`\t${link.linkText} ${link.linkURL} ( ${response.statusCode} ${response.statusMessage} )\n`);
+
+				})
+
+				.catch((error) => {
+
+					console.log(error);
+
+				});
+
+		});
+
 
 	};
 
@@ -158,19 +189,19 @@ module.exports = (givenPath, options) => {
 
 				getLinks(file);
 
-				validateLink(linkInfo[1])
+				if (linkCollection === null) {
 
-					.then((response) => {
+					return console.log('There are 0 links found in the (*.md) file');
 
-						console.log(`\t${linkInfo[0]} ${linkInfo[1]} ( ${response.statusCode} ${response.statusMessage} )\n`);
+				} else {
 
-					})
+					parseLinks(matchedLinks);
 
-					.catch((error) => {
+					linksToLink(parsedLinksCollection);
 
-						console.log(error);
+					validateLink(link);
 
-					});
+				}
 
 			})
 
