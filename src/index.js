@@ -4,6 +4,80 @@ module.exports = (givenPath, options) => {
 	const path = require('path');
 	const url = require('url');
 
+	let linkCollection = [];
+	let filteredFiles = [];
+	let linkInfo = [];
+
+	const readDir = (absolutePath) => {
+
+		return new Promise((resolve, reject) => {
+
+			fs.readdir(absolutePath, 'utf8', (err, files) => {
+
+				return err ? reject(err) : resolve(files);
+
+			});
+
+		});
+
+	};
+
+	const readFile = (absolutePath) => {
+
+		return new Promise((resolve, reject) => {
+
+			fs.readFile(absolutePath, 'utf8', (err, file) => {
+
+				return err ? reject(err) : resolve(file);
+
+			});
+
+		});
+
+	};
+
+	const filterFiles = (files) => {
+
+		filteredFiles = files.filter(file => {
+
+			if (path.extname(file) === ".md") {
+
+				return file;
+
+			}
+
+		});
+
+		return filteredFiles;
+
+	};
+
+	const getLinks = (file) => {
+
+		const matchLinks = /\[([^[])+\]\(([^)])+\)/giu;
+
+		let matchedLinks = file.match(matchLinks);
+
+		linkCollection = matchedLinks.map((link) => {
+
+			const matchText = /\[([^[])+\]/giu;
+			let linkText = link.match(matchText);
+
+			const matchURL = /(http|https)+:{1}(\/){2}([\w\-:\.])+[\w\-\/=]*[^ \.]\b/giu;
+			let linkURL = link.match(matchURL);
+
+			let linkString = linkURL.toString();
+
+			linkInfo = [linkText, linkString];
+
+			return linkInfo;
+
+		});
+
+		console.log(`\t${linkCollection.length} links were found in total.\n`);
+
+	};
+
 	const validateLink = (linkString) => {
 
 		return new Promise((reject, resolve) => {
@@ -45,46 +119,6 @@ module.exports = (givenPath, options) => {
 
 	};
 
-	const getLinks = (file) => {
-
-		const matchLinks = /\[([^[])+\]\(([^)])+\)/giu;
-
-		let matchedLinks = file.match(matchLinks);
-
-		console.log(`\t${linkCollection.length} links were found in total.\n`);
-
-		let linkCollection = matchedLinks.map((link) => {
-
-			const matchText = /\[([^[])+\]/giu;
-			let linkText = link.match(matchText);
-
-			const matchURL = /(http|https)+:{1}(\/){2}([\w\-:\.])+[\w\-\/=]*[^ \.]\b/giu;
-			let linkURL = link.match(matchURL);
-
-			let linkString = linkURL.toString();
-
-			const linkInfo = [linkText, linkString];
-
-			return linkInfo;
-
-		});
-
-	};
-
-	const readDir = (absolutePath) => {
-
-		return new Promise((resolve, reject) => {
-
-			fs.readdir(absolutePath, 'utf8', (err, files) => {
-
-				return err ? reject(err) : resolve(files);
-
-			});
-
-		});
-
-	};
-
 	const printFilteredFiles = (filteredFiles) => {
 
 		filteredFiles.forEach((file) => {
@@ -92,22 +126,6 @@ module.exports = (givenPath, options) => {
 			console.log(`\t${file}\n`);
 
 		});
-
-	};
-
-	const filterFiles = (files) => {
-
-		let filteredFiles = files.filter(file => {
-
-			if (path.extname(file) === ".md") {
-
-				return file;
-
-			}
-
-		});
-
-		return filteredFiles;
 
 	};
 
@@ -129,20 +147,6 @@ module.exports = (givenPath, options) => {
 				console.log(error);
 
 			});
-
-	};
-
-	const readFile = (absolutePath) => {
-
-		return new Promise((resolve, reject) => {
-
-			fs.readFile(absolutePath, 'utf8', (err, file) => {
-
-				return err ? reject(err) : resolve(file);
-
-			});
-
-		});
 
 	};
 
