@@ -6,7 +6,6 @@ module.exports = (givenPath, options) => {
 
 	let linkCollection = [];
 	let filteredFiles = [];
-	let linkInfo = [];
 	let matchedLinks = [];
 	let parsedLinksCollection = [];
 
@@ -74,7 +73,7 @@ module.exports = (givenPath, options) => {
 			const matchURL = /(http|https)+:{1}(\/){2}([\w\-:\.])+[\w\-\/=]*[^ \.]\b/giu;
 			let linkURL = link.match(matchURL);
 
-			let linkString = linkURL.toString();
+			linkString = linkURL.toString();
 
 			parsedLinksCollection.push({linkText, linkURL, linkString});
 
@@ -169,7 +168,16 @@ module.exports = (givenPath, options) => {
 			.then((files) => {
 
 				filterFiles(files);
-				printFilteredFiles(filteredFiles);
+
+				if (filteredFiles.length < 1) {
+
+					console.log('\tNo markdown (*.md) files were found.\n');
+
+				} else {
+
+					printFilteredFiles(filteredFiles);
+
+				}
 
 			})
 
@@ -191,7 +199,7 @@ module.exports = (givenPath, options) => {
 
 				if (linkCollection === null) {
 
-					return console.log('There are 0 links found in the (*.md) file');
+					return console.log('No links were found in the (*.md) file.');
 
 				} else {
 
@@ -199,7 +207,7 @@ module.exports = (givenPath, options) => {
 
 					linksToLink(parsedLinksCollection);
 
-					validateLink(link);
+					validateLink(linkString);
 
 				}
 
