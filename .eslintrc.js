@@ -26,7 +26,6 @@ module.exports = {
         "semi": 1,
         "no-floating-decimal": 1,
         "no-multi-spaces": 1,
-        "object-property-newline": 1,
         "padded-blocks": [1, "always"],
         "space-before-blocks": 1,
         "space-in-parens": 1,
