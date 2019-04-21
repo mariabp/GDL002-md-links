@@ -89,9 +89,6 @@ module.exports = (givenPath, options) => {
 
 	const printLinks = (parsedLinksCollection) => {
 
-		getLinks(file);
-		parseLinks(matchedLinks);
-
 		parsedLinksCollection.forEach((link) => {
 
 			console.log(`\t${link.linkText} ${link.linkURL}\n`);
@@ -204,35 +201,17 @@ module.exports = (givenPath, options) => {
 
 	};
 
-	const isMdFile = (absolutePath) => {
+	const validateOptions = (options) => {
 
-		readFile(absolutePath)
+		if (options[0] === '--validate') {
 
-			.then((file) => {
+			validateAllLinks(parsedLinksCollection);
 
-				getLinks(file);
+		} else if (options[0] === undefined) {
 
-				if (matchedLinks === null) {
+			printLinks(parsedLinksCollection);
 
-					return console.log('\n\tNo links were found in the (*.md) file.\n');
-
-				} else {
-
-					parseLinks(matchedLinks);
-
-					validateAllLinks(parsedLinksCollection);
-
-					validateLink(linkString);
-
-				}
-
-			})
-
-			.catch((error) => {
-
-				console.log(error);
-
-			});
+		}
 
 	};
 
@@ -262,13 +241,33 @@ module.exports = (givenPath, options) => {
 
 	};
 
-	const validateOptions = (options) => {
+	const isMdFile = (absolutePath) => {
 
-		if (options[0] === undefined) {
+		readFile(absolutePath)
 
-			printLinks(parsedLinksCollection);
+			.then((file) => {
 
-		}
+				getLinks(file);
+
+				if (matchedLinks === null) {
+
+					return console.log('\tNo links were found in the (*.md) file.\n');
+
+				} else {
+
+					parseLinks(matchedLinks);
+
+					validateOptions(options);
+
+				}
+
+			})
+
+			.catch((error) => {
+
+				console.log(error);
+
+			});
 
 	};
 
@@ -283,6 +282,8 @@ module.exports = (givenPath, options) => {
 		let absolutePath = path.resolve(cwd, givenPath);
 
 		if (fs.existsSync(absolutePath)) {
+
+			console.log(`\n\tPath: ${absolutePath}\n`);
 
 			fileOrDir(absolutePath);
 
