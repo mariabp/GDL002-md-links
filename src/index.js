@@ -85,7 +85,20 @@ module.exports = (givenPath, options) => {
 
 	};
 
-	const linksToLink = (parsedLinksCollection) => {
+	const printLinks = (parsedLinksCollection) => {
+
+		getLinks(file);
+		parseLinks(matchedLinks);
+
+		parsedLinksCollection.forEach((link) => {
+
+			console.log(`\t${link.linkText} ${link.linkURL}\n`);
+
+		});
+
+	};
+
+	const validateAllLinks = (parsedLinksCollection) => {
 
 		parsedLinksCollection.forEach((link) => {
 
@@ -197,15 +210,15 @@ module.exports = (givenPath, options) => {
 
 				getLinks(file);
 
-				if (linkCollection === null) {
+				if (matchedLinks === null) {
 
-					return console.log('No links were found in the (*.md) file.');
+					return console.log('\tNo links were found in the (*.md) file.\n');
 
 				} else {
 
 					parseLinks(matchedLinks);
 
-					linksToLink(parsedLinksCollection);
+					validateAllLinks(parsedLinksCollection);
 
 					validateLink(linkString);
 
@@ -247,6 +260,16 @@ module.exports = (givenPath, options) => {
 
 	};
 
+	const validateOptions = (options) => {
+
+		if (options[0] === undefined) {
+
+			printLinks(parsedLinksCollection);
+
+		}
+
+	};
+
 	const validatePath = (givenPath) => {
 
 		if (givenPath === undefined) {
@@ -269,6 +292,6 @@ module.exports = (givenPath, options) => {
 
 	};
 
-	validatePath(givenPath);
+	validatePath(givenPath, options);
 
 };
