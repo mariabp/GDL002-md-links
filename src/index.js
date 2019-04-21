@@ -9,6 +9,8 @@ module.exports = (givenPath, options) => {
 	let matchedLinks = [];
 	let parsedLinksCollection = [];
 
+	const cwd = process.cwd();
+
 	const readDir = (absolutePath) => {
 
 		return new Promise((resolve, reject) => {
@@ -184,7 +186,7 @@ module.exports = (givenPath, options) => {
 
 				if (filteredFiles.length < 1) {
 
-					console.log('\tNo markdown (*.md) files were found.\n');
+					console.log('\n\tNo markdown (*.md) files were found.\n');
 
 				} else {
 
@@ -202,7 +204,7 @@ module.exports = (givenPath, options) => {
 
 	};
 
-	const isFile = (absolutePath) => {
+	const isMdFile = (absolutePath) => {
 
 		readFile(absolutePath)
 
@@ -212,7 +214,7 @@ module.exports = (givenPath, options) => {
 
 				if (matchedLinks === null) {
 
-					return console.log('\tNo links were found in the (*.md) file.\n');
+					return console.log('\n\tNo links were found in the (*.md) file.\n');
 
 				} else {
 
@@ -240,7 +242,7 @@ module.exports = (givenPath, options) => {
 
 			if (path.extname(absolutePath) === '.md') {
 
-				isFile(absolutePath);
+				isMdFile(absolutePath);
 
 			} else {
 
@@ -276,17 +278,17 @@ module.exports = (givenPath, options) => {
 
 			console.log(`\n\tYou must provide a path to a markdown (*.md) file.\n`);
 
-		} else if (path.isAbsolute(givenPath)) {
+		}
 
-			let absolutePath = givenPath;
+		let absolutePath = path.resolve(cwd, givenPath);
 
-			path.normalize(absolutePath);
-
-			console.log(`\n\t${absolutePath}\n`);
+		if (fs.existsSync(absolutePath)) {
 
 			fileOrDir(absolutePath);
 
-			return absolutePath;
+		} else {
+
+			console.log('\n\tThe provided path does not exist.\n');
 
 		}
 
