@@ -120,6 +120,32 @@ module.exports = (givenPath, options) => {
 
 	};
 
+	const getLinkStats = (parsedLinksCollection) => {
+
+		let retrieveLinks = parsedLinksCollection.map((element) => {
+
+			return (element.link);
+
+		});
+
+		let uniqueLinks = retrieveLinks.reduce((accumulatedValue, currentValue) => {
+
+			if (accumulatedValue.indexOf(currentValue) === -1) {
+
+				return accumulatedValue.concat(currentValue);
+
+			} else {
+
+				return accumulatedValue;
+
+			}
+
+		}, []);
+
+		console.log(`\t${uniqueLinks.length} unique link(s) found.\n`);
+
+	};
+
 	const validateLink = (linkString) => {
 
 		return new Promise((reject, resolve) => {
@@ -206,6 +232,10 @@ module.exports = (givenPath, options) => {
 		if (options[0] === '--validate') {
 
 			validateAllLinks(parsedLinksCollection);
+
+		} else if (options[0] === "--stats") {
+
+			getLinkStats(parsedLinksCollection);
 
 		} else if (options[0] === undefined) {
 
