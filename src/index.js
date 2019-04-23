@@ -8,6 +8,8 @@ module.exports = (givenPath, options) => {
 	let filteredFiles = [];
 	let matchedLinks = [];
 	let parsedLinksCollection = [];
+	let validatedLinks = [];
+	let brokenLinks = [];
 
 	const cwd = process.cwd();
 
@@ -43,7 +45,7 @@ module.exports = (givenPath, options) => {
 
 		filteredFiles = files.filter(file => {
 
-			if (path.extname(file) === ".md") {
+			if (path.extname(file) === '.md') {
 
 				return file;
 
@@ -105,7 +107,11 @@ module.exports = (givenPath, options) => {
 
 				.then((response) => {
 
-					console.log(`\t${link.linkText} ${link.linkURL} ( ${response.statusCode} ${response.statusMessage} )\n`);
+					let validatedLink = { linkText: link.linkText, linkURL: link.linkURL, statusCode: response.statusCode, statusMessage: response.statusMessage };
+
+					validatedLinks.push(validatedLink);
+
+					console.log(`\t${validatedLink.linkText} ${validatedLink.linkURL} ( ${validatedLink.statusCode} ${validatedLink.statusMessage} )\n`);
 
 				})
 
@@ -120,11 +126,11 @@ module.exports = (givenPath, options) => {
 
 	};
 
-	const getLinkStats = (parsedLinksCollection) => {
+	const getLinkStats = (givenLinkCollection) => {
 
-		let retrieveLinks = parsedLinksCollection.map((element) => {
+		let retrieveLinks = givenLinkCollection.map((element) => {
 
-			return (element.link);
+			return (element.linkString);
 
 		});
 
@@ -146,6 +152,27 @@ module.exports = (givenPath, options) => {
 
 	};
 
+	const validateStats = (validatedLinks) => {
+
+		validatedLinks.forEach((element) => {
+
+			let statusOk = [200, 301];
+
+			if (statusOk.indexOf(element.statusCode) === -1) {
+
+				brokenLinks.push(element);
+
+			}
+
+			getLinkStats(validatedLinks);
+
+			console.log(`\t${brokenLinks.length} broken link(s) found.\n`);
+
+
+		});
+
+	};
+
 	const validateLink = (linkString) => {
 
 		return new Promise((reject, resolve) => {
@@ -163,7 +190,7 @@ module.exports = (givenPath, options) => {
 
 			let linkProtocol = require('http');
 
-			if (parsedURL.protocol === "https:") {
+			if (parsedURL.protocol === 'https:') {
 
 				linkProtocol = require('https');
 
@@ -233,11 +260,15 @@ module.exports = (givenPath, options) => {
 
 			validateAllLinks(parsedLinksCollection);
 
-		} else if (options[0] === "--stats") {
+		} else if (options[0] === '--stats') {
 
 			getLinkStats(parsedLinksCollection);
 
-		} else if (options[0] === undefined) {
+		} else if (options[0] === '--validate' && options[1] === '--stats') {
+
+			validateStats(validatedLinks);
+
+		} else {
 
 			printLinks(parsedLinksCollection);
 
