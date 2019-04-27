@@ -1,117 +1,284 @@
 module.exports = (givenPath, options) => {
 
-	const fs = require('fs');
-	const path = require('path');
-	const url = require('url');
+	return new Promise((resolve, reject) => {
 
-	let linkCollection = [];
-	let filteredFiles = [];
-	let matchedLinks = [];
-	let parsedLinksCollection = [];
-	let validatedLinks = [];
-	let brokenLinks = [];
+		const fs = require('fs');
+		const path = require('path');
+		const url = require('url');
 
-	const cwd = process.cwd();
+		let linkCollection = [];
+		let filteredFiles = [];
+		let matchedLinks = [];
+		let parsedLinksCollection = [];
+		let validatedLinksCollection = [];
+		let brokenLinksCollection = [];
+		let uniqueLinksCollection = [];
 
-	const readDir = (absolutePath) => {
 
-		return new Promise((resolve, reject) => {
+		const cwd = process.cwd();
 
-			fs.readdir(absolutePath, 'utf8', (err, files) => {
+		const readDirectory = (givenPath) => {
 
-				return err ? reject(err) : resolve(files);
+			return new Promise((resolve, reject) => {
 
-			});
+				fs.readdir(givenPath, 'utf8', (err, files) => {
 
-		});
+					return err ? reject(err) : resolve(files);
 
-	};
-
-	const readFile = (absolutePath) => {
-
-		return new Promise((resolve, reject) => {
-
-			fs.readFile(absolutePath, 'utf8', (err, file) => {
-
-				return err ? reject(err) : resolve(file);
+				});
 
 			});
 
-		});
+		};
 
-	};
+		const readFile = (givenPath) => {
 
-	const filterFiles = (files) => {
+			return new Promise((resolve, reject) => {
 
-		filteredFiles = files.filter(file => {
+				fs.readFile(givenPath, 'utf8', (err, file) => {
 
-			if (path.extname(file) === '.md') {
+					return err ? reject(err) : resolve(file);
 
-				return file;
+				});
 
-			}
+			});
 
-		});
+		};
 
-		return filteredFiles;
+		const filterFiles = (files) => {
 
-	};
+			filteredFiles = files.filter(file => {
 
-	const getLinks = (file) => {
+				if (path.extname(file) === '.md') {
 
-		const matchLinks = /\[([^[])+\]\(([^)])+\)/giu;
+					return file;
 
-		matchedLinks = file.match(matchLinks);
+				}
 
-		return matchedLinks;
+			});
 
-	};
+			return filteredFiles;
 
-	const parseLinks = (matchedLinks) => {
+		};
 
-		linkCollection = matchedLinks.map((link) => {
+		const getLinks = (file) => {
 
-			const matchText = /\[([^[])+\]/giu;
-			let linkText = link.match(matchText);
+			const matchLinks = /\[([^[])+\]\(([^)])+\)/giu;
 
-			const matchURL = /(http|https)+:{1}(\/){2}([\w\-:\.])+[\w\-\/=]*[^ \.]\b/giu;
-			let linkURL = link.match(matchURL);
+			matchedLinks = file.match(matchLinks);
 
-			linkString = linkURL.toString();
+			return matchedLinks;
 
-			parsedLinksCollection.push({linkText, linkURL, linkString});
+		};
 
-			return parsedLinksCollection;
+		const parseLinks = (matchedLinks) => {
 
-		});
+			linkCollection = matchedLinks.map((link) => {
 
-		console.log(`\t${linkCollection.length} links were found in total.\n`);
+				const matchText = /\[([^[])+\]/giu;
+				let linkText = link.match(matchText);
 
-	};
+				const matchURL = /(http|https)+:{1}(\/){2}([\w\-:\.])+[\w\-\/=]*[^ \.]\b/giu;
+				let linkURL = link.match(matchURL);
 
-	const printLinks = (parsedLinksCollection) => {
+				linkString = linkURL.toString();
 
-		parsedLinksCollection.forEach((link) => {
+				parsedLinksCollection.push({linkText, linkURL, linkString});
 
-			console.log(`\t${link.linkText} ${link.linkURL}\n`);
+				return parsedLinksCollection;
 
-		});
+			});
 
-	};
+		};
 
-	const validateAllLinks = (parsedLinksCollection) => {
+		const validateLink = (linkString) => {
 
-		parsedLinksCollection.forEach((link) => {
+			return new Promise((resolve, reject) => {
 
-			validateLink(link.linkString)
+				let parsedURL = url.parse(linkString);
 
-				.then((response) => {
+				const urlOptions = {
+
+					method: 'HEAD',
+					hostname: parsedURL.hostname,
+					path: parsedURL.path,
+					protocol: parsedURL.protocol
+
+				};
+
+				let linkProtocol = require('http');
+
+				if (parsedURL.protocol === 'https:') {
+
+					linkProtocol = require('https');
+
+				}
+
+				let request = linkProtocol.request(urlOptions);
+
+				request.on('response', (response) => {
 
 					let validatedLink = { linkText: link.linkText, linkURL: link.linkURL, statusCode: response.statusCode, statusMessage: response.statusMessage };
 
-					validatedLinks.push(validatedLink);
+					resolve(validatedLinksCollection.push(validatedLink));
 
-					console.log(`\t${validatedLink.linkText} ${validatedLink.linkURL} ( ${validatedLink.statusCode} ${validatedLink.statusMessage} )\n`);
+				})
+
+				request.on('error', (error) => {
+
+					reject({ error: error.code, linkString });
+
+				});
+
+				request.end();
+
+			});
+
+		};
+
+		const validateAllLinks = (parsedLinksCollection) => {
+
+			return new Promise((resolve, reject) => {
+
+				let promises = [];
+
+				parsedLinksCollection.forEach((link) => {
+
+					promises.push(validateLink(link.linkString).catch(error => { return error }));
+
+				});
+
+				Promise.all(promises)
+
+					.then((validatedLinksCollection) => {
+
+						resolve(validatedLinksCollection);
+
+					})
+
+					.catch((error) => {
+
+						console.log(error);
+
+					});
+
+			});
+
+		};
+
+		const getUniqueLinks = (givenLinkCollection) => {
+
+			let retrieveLinks = givenLinkCollection.map((element) => {
+
+				return (element.linkString);
+
+			});
+
+			uniqueLinksCollection = retrieveLinks.reduce((accumulatedValue, currentValue) => {
+
+				if (accumulatedValue.indexOf(currentValue) === -1) {
+
+					return accumulatedValue.concat(currentValue);
+
+				} else {
+
+					return accumulatedValue;
+
+				}
+
+			}, []);
+
+			console.log(`\t${uniqueLinksCollection.length} unique link(s) found.\n`);
+
+		};
+
+		const getBrokenLinks = (givenLinkCollection) => {
+
+			givenLinkCollection.forEach((element) => {
+
+				let statusOk = [200, 301, 302];
+
+				if (statusOk.indexOf(element.statusCode) === -1) {
+
+					brokenLinksCollection.push(element);
+
+				}
+
+			});
+
+		};
+
+		const mdLinksNoOptions = (parsedLinksCollection) => {
+
+			resolve(parsedLinksCollection);
+
+		};
+
+		const mdLinksStats = (givenLinkCollection) => {
+
+			getUniqueLinks(givenLinkCollection);
+
+			resolve(parsedLinksCollection, uniqueLinksCollection);
+
+		};
+
+		const mdLinksValidate = (givenLinkCollection) => {
+
+			validateAllLinks(givenLinkCollection)
+
+				.then((validatedLinksCollection) => {
+
+					resolve({parsedLinksCollection, validatedLinksCollection});
+
+				});
+
+		};
+
+		const mdLinksValidateStats = (parsedLinksCollection) => {
+
+			validateAllLinks(parsedLinksCollection)
+
+				.then((validatedLinksCollection) => {
+
+					getUniqueLinks(validatedLinksCollection);
+
+					getBrokenLinks(validatedLinksCollection);
+
+					resolve({ parsedLinksCollection, validatedLinksCollection, uniqueLinksCollection, brokenLinksCollection });
+
+				});
+
+		};
+
+		const printFilteredFiles = (filteredFiles) => {
+
+			filteredFiles.forEach((file) => {
+
+				console.log(`\t${file}\n`);
+
+			});
+
+		};
+
+		const isDir = (givenPath) => {
+
+			filteredFiles;
+
+			readDirectory(givenPath)
+
+				.then((files) => {
+
+					filterFiles(files);
+
+					if (filteredFiles.length < 1) {
+
+						console.log('\n\tNo markdown (*.md) files were found.\n');
+
+					} else {
+
+						printFilteredFiles(filteredFiles);
+
+					}
 
 				})
 
@@ -121,241 +288,112 @@ module.exports = (givenPath, options) => {
 
 				});
 
-		});
+		};
 
+		const validateOptions = (options) => {
 
-	};
+			if (options[0] === '--validate' && options[1] === undefined) {
 
-	const getLinkStats = (givenLinkCollection) => {
+				mdLinksValidate(parsedLinksCollection);
 
-		let retrieveLinks = givenLinkCollection.map((element) => {
+			} else if (options[0] === '--stats') {
 
-			return (element.linkString);
+				mdLinksStats(parsedLinksCollection);
 
-		});
+			} else if (options[0] === '--validate' && options[1] === '--stats') {
 
-		let uniqueLinks = retrieveLinks.reduce((accumulatedValue, currentValue) => {
-
-			if (accumulatedValue.indexOf(currentValue) === -1) {
-
-				return accumulatedValue.concat(currentValue);
+				mdLinksValidateStats(validatedLinksCollection);
 
 			} else {
 
-				return accumulatedValue;
+				mdLinksNoOptions(parsedLinksCollection);
 
 			}
 
-		}, []);
+		};
 
-		console.log(`\t${uniqueLinks.length} unique link(s) found.\n`);
+		const fileOrDir = (givenPath) => {
 
-	};
+			if (path.extname(givenPath).length > 0) {
 
-	const validateStats = (validatedLinks) => {
+				if (path.extname(givenPath) === '.md') {
 
-		validatedLinks.forEach((element) => {
-
-			let statusOk = [200, 301];
-
-			if (statusOk.indexOf(element.statusCode) === -1) {
-
-				brokenLinks.push(element);
-
-			}
-
-			getLinkStats(validatedLinks);
-
-			console.log(`\t${brokenLinks.length} broken link(s) found.\n`);
-
-
-		});
-
-	};
-
-	const validateLink = (linkString) => {
-
-		return new Promise((reject, resolve) => {
-
-			let parsedURL = url.parse(linkString);
-
-			const urlOptions = {
-
-				method: 'HEAD',
-				hostname: parsedURL.hostname,
-				path: parsedURL.path,
-				protocol: parsedURL.protocol
-
-			};
-
-			let linkProtocol = require('http');
-
-			if (parsedURL.protocol === 'https:') {
-
-				linkProtocol = require('https');
-
-			}
-
-			let request = linkProtocol.request(urlOptions, (err, response) => {
-
-				return err ? reject(err) : resolve(response);
-
-			});
-
-			request.on('error', (error) => {
-
-				console.log(`\t${error.code}\n`);
-
-			});
-
-			request.end();
-
-		});
-
-	};
-
-	const printFilteredFiles = (filteredFiles) => {
-
-		filteredFiles.forEach((file) => {
-
-			console.log(`\t${file}\n`);
-
-		});
-
-	};
-
-	const isDir = (absolutePath) => {
-
-		filteredFiles;
-
-		readDir(absolutePath)
-
-			.then((files) => {
-
-				filterFiles(files);
-
-				if (filteredFiles.length < 1) {
-
-					console.log('\n\tNo markdown (*.md) files were found.\n');
+					isMdFile(givenPath);
 
 				} else {
 
-					printFilteredFiles(filteredFiles);
+					console.log(`\n\tYou must provide a valid markdown (*.md) file.\n`);
 
 				}
 
-			})
+			} else if (path.extname(givenPath) === '') {
 
-			.catch((error) => {
-
-				console.log(error);
-
-			});
-
-	};
-
-	const validateOptions = (options) => {
-
-		if (options[0] === '--validate') {
-
-			validateAllLinks(parsedLinksCollection);
-
-		} else if (options[0] === '--stats') {
-
-			getLinkStats(parsedLinksCollection);
-
-		} else if (options[0] === '--validate' && options[1] === '--stats') {
-
-			validateStats(validatedLinks);
-
-		} else {
-
-			printLinks(parsedLinksCollection);
-
-		}
-
-	};
-
-	const fileOrDir = (absolutePath) => {
-
-		if (path.extname(absolutePath).length > 0) {
-
-			if (path.extname(absolutePath) === '.md') {
-
-				isMdFile(absolutePath);
+				isDir(givenPath);
 
 			} else {
 
-				console.log(`\n\tYou must provide a valid markdown (*.md) file.\n`);
+				console.log(`\n\tYou must provide a valid path to an (*.md) file or directory.\n`);
 
 			}
 
-		} else if (path.extname(absolutePath) === '') {
+		};
 
-			isDir(absolutePath);
+		const isMdFile = (givenPath) => {
 
-		} else {
+			readFile(givenPath)
 
-			console.log(`\n\tYou must provide a valid path to an (*.md) file or directory.\n`);
+				.then((file) => {
 
-		}
+					getLinks(file);
 
-	};
+					if (matchedLinks === null) {
 
-	const isMdFile = (absolutePath) => {
+						return console.log('\tNo links were found in the (*.md) file.\n');
 
-		readFile(absolutePath)
+					} else {
 
-			.then((file) => {
+						parseLinks(matchedLinks);
 
-				getLinks(file);
+						validateOptions(options);
 
-				if (matchedLinks === null) {
+					}
 
-					return console.log('\tNo links were found in the (*.md) file.\n');
+				})
 
-				} else {
+				.catch((error) => {
 
-					parseLinks(matchedLinks);
+					console.log(error);
 
-					validateOptions(options);
+				});
 
-				}
+		};
 
-			})
+		const validatePath = (givenPath) => {
 
-			.catch((error) => {
+			if (givenPath === undefined) {
 
-				console.log(error);
+				console.log(`\n\tYou must provide a path to a markdown (*.md) file.\n`);
 
-			});
+			}
 
-	};
+			givenPath = path.resolve(cwd, givenPath);
 
-	const validatePath = (givenPath) => {
+			if (fs.existsSync(givenPath)) {
 
-		if (givenPath === undefined) {
+				console.log(`\n\tPath: ${givenPath}\n`);
 
-			console.log(`\n\tYou must provide a path to a markdown (*.md) file.\n`);
+				fileOrDir(givenPath);
 
-		}
+			} else {
 
-		let absolutePath = path.resolve(cwd, givenPath);
+				console.log('\n\tThe provided path does not exist.\n');
 
-		if (fs.existsSync(absolutePath)) {
+			}
 
-			console.log(`\n\tPath: ${absolutePath}\n`);
+		};
 
-			fileOrDir(absolutePath);
+		validatePath(givenPath);
 
-		} else {
-
-			console.log('\n\tThe provided path does not exist.\n');
-
-		}
-
-	};
-
-	validatePath(givenPath, options);
+	});
 
 };
