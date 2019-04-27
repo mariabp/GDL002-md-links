@@ -270,21 +270,41 @@ module.exports = (givenPath, options) => {
 
 		const validateOptions = (options) => {
 
-			if (options[0] === '--validate' && options[1] === undefined) {
+			if (options === undefined) {
 
-				mdLinksValidate(parsedLinksCollection);
-
-			} else if (options[0] === '--stats') {
-
-				mdLinksStats(parsedLinksCollection);
-
-			} else if (options[0] === '--validate' && options[1] === '--stats') {
-
-				mdLinksValidateStats(parsedLinksCollection);
+				mdlinksNoOptions(parsedLinksCollection);
 
 			} else {
 
-				mdLinksNoOptions(parsedLinksCollection);
+				if (options[0] === "--validate" && options[1] === undefined) {
+
+					mdLinksValidate(parsedLinksCollection);
+
+				} else if (options[0] === "--stats") {
+
+					mdLinksStats(parsedLinksCollection);
+
+				} else if (options[0] === "--validate" && options[1] === "--stats") {
+
+					mdLinksValidateStats(parsedLinksCollection);
+
+				} else if (options.validate === true && options.stats === false) {
+
+					mdLinksValidate(parsedLinksCollection);
+
+				} else if (options.validate === false && options.stats === true) {
+
+					mdLinksStats(parsedLinksCollection);
+
+				} else if (options.validate === true && options.stats === true) {
+
+					mdLinksValidateStats(parsedLinksCollection);
+
+				} else {
+
+					mdLinksNoOptions(parsedLinksCollection);
+
+				}
 
 			}
 
