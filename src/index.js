@@ -2,7 +2,7 @@ module.exports = (givenPath, options) => {
 
 	'use strict';
 
-	return new Promise((resolve, reject) => {
+	return new Promise((resolve) => {
 
 		const fs = require('fs');
 		const path = require('path');
@@ -280,7 +280,7 @@ module.exports = (givenPath, options) => {
 
 			} else if (options[0] === '--validate' && options[1] === '--stats') {
 
-				mdLinksValidateStats(validatedLinksCollection);
+				mdLinksValidateStats(parsedLinksCollection);
 
 			} else {
 
