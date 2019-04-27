@@ -1,21 +1,21 @@
 module.exports = (givenPath, options) => {
 
+	'use strict';
+
 	return new Promise((resolve, reject) => {
 
 		const fs = require('fs');
 		const path = require('path');
 		const url = require('url');
 
-		let linkCollection = [];
-		let filteredFiles = [];
-		let matchedLinks = [];
+		const cwd = process.cwd();
+
+		let directoryFileList = [];
+		let linksCollection = [];
 		let parsedLinksCollection = [];
 		let validatedLinksCollection = [];
 		let brokenLinksCollection = [];
 		let uniqueLinksCollection = [];
-
-
-		const cwd = process.cwd();
 
 		const readDirectory = (givenPath) => {
 
@@ -45,59 +45,53 @@ module.exports = (givenPath, options) => {
 
 		};
 
-		const filterFiles = (files) => {
+		const filterDirectoryMarkdownFiles = (files) => {
 
-			filteredFiles = files.filter(file => {
+			files.forEach((element) => {
 
-				if (path.extname(file) === '.md') {
+				if (path.extname(element) === '.md') {
 
-					return file;
+					directoryFileList.push(element);
 
 				}
 
 			});
 
-			return filteredFiles;
-
 		};
 
-		const getLinks = (file) => {
+		const getLinks = (mdfile) => {
 
 			const matchLinks = /\[([^[])+\]\(([^)])+\)/giu;
 
-			matchedLinks = file.match(matchLinks);
-
-			return matchedLinks;
+			linksCollection = mdfile.match(matchLinks);
 
 		};
 
-		const parseLinks = (matchedLinks) => {
+		const parseLinks = (linksCollection) => {
 
-			linkCollection = matchedLinks.map((link) => {
+			linksCollection.forEach((element) => {
 
 				const matchText = /\[([^[])+\]/giu;
-				let linkText = link.match(matchText);
+				let linkText = element.match(matchText);
 
 				const matchURL = /(http|https)+:{1}(\/){2}([\w\-:\.])+[\w\-\/=]*[^ \.]\b/giu;
-				let linkURL = link.match(matchURL);
+				let linkUrlString = element.match(matchURL).toString();
 
-				linkString = linkURL.toString();
-
-				parsedLinksCollection.push({linkText, linkURL, linkString});
-
-				return parsedLinksCollection;
+				parsedLinksCollection.push({ linkText, linkUrlString });
 
 			});
 
 		};
 
-		const validateLink = (linkString) => {
+		const validateLink = (givenLink) => {
 
 			return new Promise((resolve, reject) => {
 
-				let parsedURL = url.parse(linkString);
 
-				const urlOptions = {
+				let parsedURL = url.parse(givenLink.linkUrlString);
+
+
+				const options = {
 
 					method: 'HEAD',
 					hostname: parsedURL.hostname,
@@ -108,29 +102,40 @@ module.exports = (givenPath, options) => {
 
 				let linkProtocol = require('http');
 
-				if (parsedURL.protocol === 'https:') {
+				if (parsedURL.protocol === "https:") {
 
 					linkProtocol = require('https');
 
 				}
 
-				let request = linkProtocol.request(urlOptions);
+				linkProtocol.request(options)
 
-				request.on('response', (response) => {
+					.on('response', (response) => {
 
-					let validatedLink = { linkText: link.linkText, linkURL: link.linkURL, statusCode: response.statusCode, statusMessage: response.statusMessage };
+						let validatedLink = {
 
-					resolve(validatedLinksCollection.push(validatedLink));
+							linkText: givenLink.linkText,
+							linkUrlString: givenLink.linkUrlString,
+							statusCode: response.statusCode,
+							statusMessage: response.statusMessage
 
-				})
+						};
 
-				request.on('error', (error) => {
+						validatedLinksCollection.push(validatedLink);
 
-					reject({ error: error.code, linkString });
+						resolve(validatedLink);
 
-				});
+					})
 
-				request.end();
+					.on('error', (error) => {
+
+						reject({ error: error.code, givenLink });
+
+					})
+
+					.end()
+
+				;
 
 			});
 
@@ -140,15 +145,19 @@ module.exports = (givenPath, options) => {
 
 			return new Promise((resolve, reject) => {
 
-				let promises = [];
+				let validatePromises = [];
 
-				parsedLinksCollection.forEach((link) => {
+				parsedLinksCollection.forEach((element) => {
 
-					promises.push(validateLink(link.linkString).catch(error => { return error }));
+					validatePromises.push(validateLink(element).catch((error) => {
+
+						return error;
+
+					}));
 
 				});
 
-				Promise.all(promises)
+				Promise.all(validatePromises)
 
 					.then((validatedLinksCollection) => {
 
@@ -156,21 +165,17 @@ module.exports = (givenPath, options) => {
 
 					})
 
-					.catch((error) => {
-
-						console.log(error);
-
-					});
+				;
 
 			});
 
 		};
 
-		const getUniqueLinks = (givenLinkCollection) => {
+		const getUniqueLinks = (parsedLinksCollection) => {
 
-			let retrieveLinks = givenLinkCollection.map((element) => {
+			let retrieveLinks = parsedLinksCollection.map((element) => {
 
-				return (element.linkString);
+				return (element.linkUrlString);
 
 			});
 
@@ -188,17 +193,15 @@ module.exports = (givenPath, options) => {
 
 			}, []);
 
-			console.log(`\t${uniqueLinksCollection.length} unique link(s) found.\n`);
-
 		};
 
-		const getBrokenLinks = (givenLinkCollection) => {
+		const getBrokenLinks = (validatedLinksCollection) => {
 
-			givenLinkCollection.forEach((element) => {
+			let validStatusCodes = [200, 301, 302];
 
-				let statusOk = [200, 301, 302];
+			validatedLinksCollection.forEach((element) => {
 
-				if (statusOk.indexOf(element.statusCode) === -1) {
+				if (validStatusCodes.indexOf(element.statusCode) === -1) {
 
 					brokenLinksCollection.push(element);
 
@@ -208,9 +211,35 @@ module.exports = (givenPath, options) => {
 
 		};
 
+		const resolvePromise = (givenCollections) => {
+
+			resolve(givenCollections);
+
+		};
+
 		const mdLinksNoOptions = (parsedLinksCollection) => {
 
-			resolve(parsedLinksCollection);
+			resolvePromise({ parsedLinksCollection });
+
+		};
+
+		const mdLinksValidate = (parsedLinksCollection) => {
+
+			validateAllLinks(parsedLinksCollection)
+
+				.then((validatedLinksCollection) => {
+
+					resolvePromise({ parsedLinksCollection, validatedLinksCollection });
+
+				})
+
+				.catch((error) => {
+
+					return console.log(error);
+
+				})
+
+			;
 
 		};
 
@@ -218,75 +247,31 @@ module.exports = (givenPath, options) => {
 
 			getUniqueLinks(givenLinkCollection);
 
-			resolve(parsedLinksCollection, uniqueLinksCollection);
-
-		};
-
-		const mdLinksValidate = (givenLinkCollection) => {
-
-			validateAllLinks(givenLinkCollection)
-
-				.then((validatedLinksCollection) => {
-
-					resolve({parsedLinksCollection, validatedLinksCollection});
-
-				});
+			resolvePromise({ parsedLinksCollection, uniqueLinksCollection });
 
 		};
 
 		const mdLinksValidateStats = (parsedLinksCollection) => {
 
+			getUniqueLinks(parsedLinksCollection);
+
 			validateAllLinks(parsedLinksCollection)
 
 				.then((validatedLinksCollection) => {
 
-					getUniqueLinks(validatedLinksCollection);
-
 					getBrokenLinks(validatedLinksCollection);
 
-					resolve({ parsedLinksCollection, validatedLinksCollection, uniqueLinksCollection, brokenLinksCollection });
-
-				});
-
-		};
-
-		const printFilteredFiles = (filteredFiles) => {
-
-			filteredFiles.forEach((file) => {
-
-				console.log(`\t${file}\n`);
-
-			});
-
-		};
-
-		const isDir = (givenPath) => {
-
-			filteredFiles;
-
-			readDirectory(givenPath)
-
-				.then((files) => {
-
-					filterFiles(files);
-
-					if (filteredFiles.length < 1) {
-
-						console.log('\n\tNo markdown (*.md) files were found.\n');
-
-					} else {
-
-						printFilteredFiles(filteredFiles);
-
-					}
+					resolvePromise({ parsedLinksCollection, uniqueLinksCollection, validatedLinksCollection, brokenLinksCollection });
 
 				})
 
 				.catch((error) => {
 
-					console.log(error);
+					return console.log(error);
 
-				});
+				})
+
+			;
 
 		};
 
@@ -312,47 +297,21 @@ module.exports = (givenPath, options) => {
 
 		};
 
-		const fileOrDir = (givenPath) => {
-
-			if (path.extname(givenPath).length > 0) {
-
-				if (path.extname(givenPath) === '.md') {
-
-					isMdFile(givenPath);
-
-				} else {
-
-					console.log(`\n\tYou must provide a valid markdown (*.md) file.\n`);
-
-				}
-
-			} else if (path.extname(givenPath) === '') {
-
-				isDir(givenPath);
-
-			} else {
-
-				console.log(`\n\tYou must provide a valid path to an (*.md) file or directory.\n`);
-
-			}
-
-		};
-
-		const isMdFile = (givenPath) => {
+		const readMarkdownFile = (givenPath, options) => {
 
 			readFile(givenPath)
 
-				.then((file) => {
+				.then((mdfile) => {
 
-					getLinks(file);
+					getLinks(mdfile);
 
-					if (matchedLinks === null) {
+					if (linksCollection === null) {
 
-						return console.log('\tNo links were found in the (*.md) file.\n');
+						return console.log(`\n\t\tNo links found in the provided markdown (*.md) file.\n`);
 
 					} else {
 
-						parseLinks(matchedLinks);
+						parseLinks(linksCollection);
 
 						validateOptions(options);
 
@@ -362,7 +321,37 @@ module.exports = (givenPath, options) => {
 
 				.catch((error) => {
 
-					console.log(error);
+					return console.log(error);
+
+				});
+
+		};
+
+		const getDirectoryFiles = (givenPath) => {
+
+			readDirectory(givenPath)
+
+				.then((files) => {
+
+					;
+
+					filterDirectoryMarkdownFiles(files);
+
+					if (directoryFileList.length === 0) {
+
+						console.log(`\tERROR! There are no markdown (*.md) files on the provided directory.\n`);
+
+					} else {
+
+						directoryFileList.forEach((element) => {
+
+							console.log(`\t${element}`);
+
+						});
+
+						console.log(`\n\t${directoryFileList.length} markdown (*.md) file(s) found in total.\n`);
+
+					}
 
 				});
 
@@ -372,7 +361,7 @@ module.exports = (givenPath, options) => {
 
 			if (givenPath === undefined) {
 
-				console.log(`\n\tYou must provide a path to a markdown (*.md) file.\n`);
+				return console.log(`\n\tERROR! You must provide the path to a markdown (*.md) file.\n\n\tValid Syntax:\n\n\t\t> md-links path\\to\\md\\file.md\n\n\t\t> md-links path\\to\\md\\file.md --validate\n\n\t\t> md-links path\\to\\md\\file.md --stats\n\n\t\t> md-links path\\to\\md\\file.md --validate --stats\n\n\tFor help, type md-links --help\n`);
 
 			}
 
@@ -380,13 +369,23 @@ module.exports = (givenPath, options) => {
 
 			if (fs.existsSync(givenPath)) {
 
-				console.log(`\n\tPath: ${givenPath}\n`);
+				if (path.extname(givenPath) === ".md") {
 
-				fileOrDir(givenPath);
+					readMarkdownFile(givenPath, options);
+
+				} else if (path.extname(givenPath) === "") {
+
+					getDirectoryFiles(givenPath);
+
+				} else {
+
+					console.log(`\n\tERROR! Only markdown (*.md) files can be used with mdlinks.\n`);
+
+				}
 
 			} else {
 
-				console.log('\n\tThe provided path does not exist.\n');
+				console.log(`\n\tERROR! You must provide a valid path to a markdown (*.md) file or directory.\n`);
 
 			}
 
