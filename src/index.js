@@ -79,6 +79,7 @@ module.exports = (givenPath, options) => {
 
 				parsedLinksCollection.push({ linkText, linkUrlString });
 
+
 			});
 
 		};
@@ -87,9 +88,7 @@ module.exports = (givenPath, options) => {
 
 			return new Promise((resolve, reject) => {
 
-
 				let parsedURL = url.parse(givenLink.linkUrlString);
-
 
 				const options = {
 
@@ -211,15 +210,9 @@ module.exports = (givenPath, options) => {
 
 		};
 
-		const resolvePromise = (givenCollections) => {
-
-			resolve(givenCollections);
-
-		};
-
 		const mdLinksNoOptions = (parsedLinksCollection) => {
 
-			resolvePromise({ parsedLinksCollection });
+			resolve({ isNoOptions: true, parsedLinksCollection });
 
 		};
 
@@ -229,7 +222,7 @@ module.exports = (givenPath, options) => {
 
 				.then((validatedLinksCollection) => {
 
-					resolvePromise({ parsedLinksCollection, validatedLinksCollection });
+					resolve({ isValidate: true, parsedLinksCollection, validatedLinksCollection });
 
 				})
 
@@ -247,7 +240,7 @@ module.exports = (givenPath, options) => {
 
 			getUniqueLinks(givenLinkCollection);
 
-			resolvePromise({ parsedLinksCollection, uniqueLinksCollection });
+			resolve({ isStats: true, parsedLinksCollection, uniqueLinksCollection });
 
 		};
 
@@ -261,7 +254,7 @@ module.exports = (givenPath, options) => {
 
 					getBrokenLinks(validatedLinksCollection);
 
-					resolvePromise({ parsedLinksCollection, uniqueLinksCollection, validatedLinksCollection, brokenLinksCollection });
+					resolve({ isValidateStats: true, parsedLinksCollection, uniqueLinksCollection, validatedLinksCollection, brokenLinksCollection });
 
 				})
 

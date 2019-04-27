@@ -10,54 +10,50 @@ const optionOne = process.argv[3];
 
 const optionTwo = process.argv[4];
 
-const options = [optionOne, optionTwo];
+let options = [optionOne, optionTwo];
 
 
-const printLinks = (givenCollections) => {
+const printLinks = (givenLinksCollection) => {
 
-	let parsedLinksCollection = givenCollections.parsedLinksCollection;
-	let validatedLinksCollection = givenCollections.validatedLinksCollection;
-	let uniqueLinksCollection = givenCollections.uniqueLinksCollection;
-	let brokenLinksCollection = givenCollections.brokenLinksCollection;
+	console.log(`\n\t\tPath: ${givenPath}\n`);
 
-	console.log(`\n\tPath:${givenPath}\n`);
+	if (givenLinksCollection.isValidate) {
 
-	if (validatedLinksCollection !== undefined && uniqueLinksCollection === undefined && brokenLinksCollection === undefined) {
+		givenLinksCollection.validatedLinksCollection.forEach((element) => {
 
-		validatedLinksCollection.forEach((link) => {
+			if (element.error) {
 
-			if (link.error) {
-
-				console.log(`\t${link.error.code}`);
+				console.log(`\t--- ERROR --- ${element.givenLink.linkText} ${element.givenLink.linkUrlString} ( ${element.error} ).\n`);
 
 			} else {
 
-				console.log(`\t${validatedLinksCollection.linkText} ${validatedLinksCollection.linkURL} ( ${validatedLinksCollection.statusCode} ${validatedLinksCollection.statusMessage} )\n`);
+				console.log(`\t${element.linkText} ${element.linkUrlString} ( ${element.statusCode} ${element.statusMessage} )\n`);
 
 			}
 
 		});
 
-	} else if (uniqueLinksCollection !== undefined && brokenLinksCollection === undefined && validatedLinksCollection === undefined) {
+	} else if (givenLinksCollection.isStats) {
 
-		console.log(`\t${uniqueLinksCollection.length} unique link(s) found.\n`);
+		console.log(`\t\t${givenLinksCollection.uniqueLinksCollection.length} unique link(s) found in total.\n`);
 
-	} else if (validatedLinksCollection !== undefined && brokenLinksCollection !== undefined && uniqueLinksCollection !== undefined) {
+	} else if (givenLinksCollection.isValidateStats) {
 
-		console.log(`\t${uniqueLinksCollection.length} unique link(s) found.\n`);
-		console.log(`\t${brokenLinksCollection.length} broken link(s) found.\n`);
+		console.log(`\t\t${givenLinksCollection.uniqueLinksCollection.length} unique link(s) found in total.\n`);
+
+		console.log(`\t\t${givenLinksCollection.brokenLinksCollection.length} broken link(s) found in total.\n`);
 
 	} else {
 
-		parsedLinksCollection.forEach((link) => {
+		givenLinksCollection.parsedLinksCollection.forEach((element) => {
 
-			console.log(`\t${parsedLinksCollection.linkText} ${parsedLinksCollection.linkURL})\n`);
+			console.log(`\t${element.linkText} ${element.linkUrlString}\n`);
 
 		});
 
 	}
 
-	console.log(`\t${parsedLinksCollection.length} link(s) found in total.\n`);
+	console.log(`\t\t${givenLinksCollection.parsedLinksCollection.length} link(s) found in total.\n`);
 
 };
 
