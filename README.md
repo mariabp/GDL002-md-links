@@ -185,4 +185,5 @@ Broken: 1
 ![Diagrama de flujo md-links](images/md-links.png)
 
 ## Funciones Markdown Links
+A continuación se describen las funciones que conforman mdlinks:
 ![Funciones md-links](images/funciones-mdlinks.png)
