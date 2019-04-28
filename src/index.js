@@ -55,6 +55,8 @@ module.exports = (givenPath, options) => {
 
 				}
 
+				return directoryFileList;
+
 			});
 
 		};
@@ -64,6 +66,8 @@ module.exports = (givenPath, options) => {
 			const matchLinks = /\[([^[])+\]\(([^)])+\)/giu;
 
 			linksCollection = mdfile.match(matchLinks);
+
+			return linksCollection;
 
 		};
 
@@ -81,6 +85,8 @@ module.exports = (givenPath, options) => {
 
 
 			});
+
+			return parsedLinksCollection;
 
 		};
 
@@ -206,6 +212,8 @@ module.exports = (givenPath, options) => {
 
 				}
 
+				return brokenLinksCollection;
+
 			});
 
 		};
@@ -272,7 +280,7 @@ module.exports = (givenPath, options) => {
 
 			if (options === undefined) {
 
-				mdlinksNoOptions(parsedLinksCollection);
+				mdLinksNoOptions(parsedLinksCollection);
 
 			} else {
 
@@ -346,19 +354,18 @@ module.exports = (givenPath, options) => {
 
 				.then((files) => {
 
-					;
 
 					filterDirectoryMarkdownFiles(files);
 
 					if (directoryFileList.length === 0) {
 
-						console.log(`\tERROR! There are no markdown (*.md) files on the provided directory.\n`);
+						console.log(`\n\tERROR! There are no markdown (*.md) files on the provided directory.\n`);
 
 					} else {
 
 						directoryFileList.forEach((element) => {
 
-							console.log(`\t${element}`);
+							console.log(`\n\t${element}`);
 
 						});
 
