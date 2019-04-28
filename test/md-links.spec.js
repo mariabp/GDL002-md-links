@@ -1,15 +1,13 @@
-const mdLinks = require('../src/index');
-const fs = require('../src/index');
-const path = require('../src/index');
-const validatePath = require('../src/index');
+require('..functions');
+
 
 describe('validatePath', () => {
 
 	it('should return an error if path is undefined', () => {
 
-		validatePath('').then(result => {
+		validatePath().then(result => {
 
-			expect(result).toBe('You must provide a path to a markdown (*.md) file.');
+			expect(result).toBe('\n\tYou must provide a path to a markdown (*.md) file.\n`');
 
 		});
 
