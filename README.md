@@ -3,12 +3,12 @@
 MD-Links es una librería cuya principal función es leer y analizar archivos en formato `Markdown` (*.md), para verificar el estado de los enlaces o ligas que contiene y reportar cuantos encontró, cuantos enlaces están rotos y cuantos son únicos.
 ## Documentación
 ### Requerimientos previos
--  [node.js](https://nodejs.org/en/download/)  
+-  [node.js](https://nodejs.org/en/download/)
 ### Instalación
 Este módulo se instala desde la terminal, en donde será necesario escribir el siguiente comando para iniciar la instalación: 
 ```sh
 
-$ npm install md-links
+$ npm install mariabp-md-links
 
 ```
 Al presionar enter, se instalará la librería y las dependencias necesarias para que esta funcione correctamente. 
@@ -182,4 +182,4 @@ Broken: 1
 ```
 
 ## Diagrama de Flujo Markdown Links
-![Diagrama de flujo md-links](https://lh3.googleusercontent.com/e3dwbRm67DjbQi2F00WDb3W12avWU3Q_Xca8dMFO-J_8L9s8bZJhG5fzPS0F60RAQIHkaQWw5t4n "md-links")
+![Diagrama de flujo md-links](images/md-links.png)
