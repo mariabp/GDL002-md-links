@@ -183,3 +183,6 @@ Broken: 1
 
 ## Diagrama de Flujo Markdown Links
 ![Diagrama de flujo md-links](images/md-links.png)
+
+## Funciones Markdown Links
+![Funciones md-links](images/funciones-mdlinks.png)
