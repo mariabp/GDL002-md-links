@@ -60,17 +60,17 @@ El módulo puede importarse en otros scripts de Node.js y debe ofrece la siguien
 
 - `--stats`: Booleano que determina si se desea obtener las siguientes estadísticas de los enlaces:
 
-- Total de enlaces encontrados.
+	- Total de enlaces encontrados.
 
-- Total de enlaces únicos encontrados.
+	- Total de enlaces únicos encontrados.
 
 - `--validate --stats`: Booleano que determina si se desea obtener las siguientes estadísticas de los enlaces:
 
-- Total de enlaces únicos encontrados.
+	- Total de enlaces únicos encontrados.
 
-- Total de enlaces rotos encontrados
+	- Total de enlaces rotos encontrados
 
-- Total de enlaces encontrados.
+	- Total de enlaces encontrados.
 
 
 
