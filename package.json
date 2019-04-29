@@ -1,6 +1,6 @@
 {
   "name": "mariabp-md-links",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "Maria Bolaños/Laboratoria GDL002",
   "main": "bin/cli.js",
   "bin": {
