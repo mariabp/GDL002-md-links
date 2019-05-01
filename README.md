@@ -42,6 +42,9 @@ El módulo puede importarse en otros scripts de Node.js y debe ofrece la siguien
 
 #### `mdLinks(path, options)`
 
+Si no se instalo en global, será necesario introducir la siguiente interfaz:
+
+#### `npx mdLinks(path, options)`
 
 
 ##### Argumentos
