@@ -176,6 +176,47 @@ user$ md-links /path/archivo.md --stats
                 10 link(s) found in total.
 
 ```
+### Uso en JavaScript
+```sh
+const mdLinks = require("../index");
+```
+Para comenzar, se debe importar el módulo para que podamos llamar a mdLinks.
+Esta función  puede ser invocada con uno o dos argumentos: la ruta del archivo o carpeta de la que queremos obtener los links, y las opciones antes descritas.
+
+```
+  - mdLinks(ruta).then().catch();
+
+  - mdLinks(ruta, options).then().catch();
+```
+Algunos ejemplos de rutas válidas:
+
+  -   `'./ruta/a/algunaCarpeta/archivo.md'`
+  -   `'./archivo.md'`
+  -   `'archivo.md'`
+  -   `'\archivo'`
+  -   `'\\ruta\\a\\algunaCarpeta\\archivo'`
+
+Nota: Para que el programa funcione, es necesario escapar los backslashes ( \ ) o utilizar forward slash ( / ).
+
+Según la opción que haya elegido el usuario, la función retornará uno, dos o cuatro arreglos con colecciones de links.
+
+`mdLinks('./ruta/a/algunaCarpeta/archivo.md').then((resultado) => {}).catch((error) => {});`
+
+Cuando el usuario llama a la función sin opciones, el arreglo que retornará será: _**parsedLinksCollection**_.
+Y contendrá una colección con los links encontrados en el archivo (*.md)
+
+`mdLinks('./path/to/md/file.md', { validate: true }).then((result) => {}).catch((error) => {});`
+
+Cuando el usuario ingrese `{ validate: true }`,  hará una rápida validación del estado de los enlaces y retornará dos arreglos: _**parsedLinksCollection**_ y _**validatedLinksCollection**_.
+
+``` mdLinks('./ruta/a/algunaCarpeta/archivo.md', { stats: true }).then((resultado) => {}).catch((error) => {});```
+
+Cuando el usuario ingrese  `{ stats: true }`, filtrará los enlaces que solo aparecen una vez y los almacenará en un arreglo _**uniqueLinksCollection**_ que será retornado junto con **parsedLinksCollection**_.
+
+``` mdLinks('./path/to/md/file.md', { validateStats: true }).then((result) => {}).catch((error) => {});```
+
+Cuando el usuario ingrese `{ validateStats: true }`, primero hará una rápida validación del estado de los links, luego filtrará los enlaces que aparecen solo una vez, después en otro arreglo, almacenará los enlaces rotos y por último imprimirá el total de enlaces encontrados.
+Esta función retorna cuatro arreglos:   _**parsedLinksCollection**_,  _**validatedLinksCollection**_  ,  _**uniqueLinksCollection**_ y _**brokenLinksCollection**_  que encontró en el respectivo  archivo (*.md).
 
 
 
