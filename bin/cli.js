@@ -13,7 +13,29 @@ const optionTwo = process.argv[4];
 let options = [optionOne, optionTwo];
 
 
+const truncateLinkText = (givenLink) => {
+
+	if (givenLink[0].length > 52) {
+
+		let regExp = /[^\[]+(?=\])/gi;
+
+		let getText = givenLink[0].match(regExp);
+
+		let truncatedText = `[${getText[0].substring(0, 45)}]`;
+
+		return truncatedText;
+
+
+	} else {
+
+		return givenLink[0];
+
+	}
+
+};
+
 const printLinks = (givenLinksCollection) => {
+
 
 	console.log(`\n\t\tPath: ${givenPath}\n`);
 
@@ -21,13 +43,15 @@ const printLinks = (givenLinksCollection) => {
 
 		givenLinksCollection.validatedLinksCollection.forEach((element) => {
 
+			let truncatedLinkText = truncateLinkText(element.linkText);
+
 			if (element.error) {
 
-				console.log(`\t--- ERROR --- ${element.givenLink.linkText} ${element.givenLink.linkUrlString} ( ${element.error} ).\n`);
+				console.log(`\t--- ERROR --- ${truncatedLinkText} ${element.givenLink.linkUrlString} ( ${element.error} ).\n`);
 
 			} else {
 
-				console.log(`\t${element.linkText} ${element.linkUrlString} ( ${element.statusCode} ${element.statusMessage} )\n`);
+				console.log(`\t${truncatedLinkText} ${element.linkUrlString} ( ${element.statusCode} ${element.statusMessage} )\n`);
 
 			}
 
@@ -47,7 +71,9 @@ const printLinks = (givenLinksCollection) => {
 
 		givenLinksCollection.parsedLinksCollection.forEach((element) => {
 
-			console.log(`\t${element.linkText} ${element.linkUrlString}\n`);
+			let truncatedLinkText = truncateLinkText(element.linkText);
+
+			console.log(`\t${truncatedLinkText} ${element.linkUrlString}\n`);
 
 		});
 
