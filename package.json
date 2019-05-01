@@ -1,6 +1,6 @@
 {
   "name": "mariabp-md-links",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": "Maria Bolaños/Laboratoria GDL002",
   "main": "bin/cli.js",
   "bin": {
@@ -8,7 +8,8 @@
   },
   "scripts": {
     "eslint": "eslint --ext .js src/ test/",
-    "test": "jest --coverage"
+    "test": "jest --coverage",
+    "md-links": "md-links"
   },
   "devDependencies": {
     "eslint": "^5.16.0",
@@ -19,7 +20,7 @@
     "eslint-plugin-standard": "^4.0.0",
     "jest": "^24.7.1"
   },
-  "description": "## Descripción del módulo",
+  "description": "Finds and validates links in markdown (*.md) files.",
   "directories": {
     "test": "test"
   },
