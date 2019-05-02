@@ -46,13 +46,13 @@ const printLinks = (givenLinksCollection) => {
 
 				truncatedLinkText = truncateLinkText(element.givenLink.linkText);
 
-				console.log(`\t--- ERROR --- ${truncatedLinkText} ${element.givenLink.linkUrlString} (${element.error}) Line: ${element.lineNumber}.\n`);
+				console.log(`\t--- ERROR --- \u001b[1m${truncatedLinkText}\x1b[0m ${element.givenLink.linkUrlString} (${element.error}) \u001b[4mLine: ${element.lineNumber}. \x1b[0m\n`);
 
 			} else {
 
 				truncatedLinkText = truncateLinkText(element.linkText);
 
-				console.log(`\t${truncatedLinkText} ${element.linkUrlString} ( ${element.statusCode} ${element.statusMessage} ) Line: ${element.lineNumber}\n`);
+				console.log(`\t\u001b[1m${truncatedLinkText}\x1b[0m ${element.linkUrlString} ( ${element.statusCode} ${element.statusMessage} ) \u001b[4mLine: ${element.lineNumber} \x1b[0m\n`);
 
 			}
 
@@ -74,7 +74,7 @@ const printLinks = (givenLinksCollection) => {
 
 			let truncatedLinkText = truncateLinkText(element.linkText);
 
-			console.log(`\t${truncatedLinkText} ${element.linkUrlString} ${element.lineNumber}\n`);
+			console.log(`\t\u001b[1m${truncatedLinkText}\x1b[0m ${element.linkUrlString} \u001b[4mLine: ${element.lineNumber} \x1b[0m\n`);
 
 		});
 
