@@ -63,9 +63,23 @@ module.exports = (givenPath, options) => {
 
 		const getLinks = (mdfile) => {
 
-			const matchLinks = /\[([^[])+\]\(([^)])+\)/giu;
+			mdfile = mdfile.split('\n');
 
-			linksCollection = mdfile.match(matchLinks);
+			mdfile.forEach(element => {
+
+				const matchLink = /\[([^\[\]])+\]\(([^\(\)])+\)/gi;
+				let matchedLink = element.match(matchLink);
+
+
+				if (matchedLink !== null) {
+
+					let lineNumber = mdfile.indexOf(element) + 1;
+
+					linksCollection.push({matchedLink, lineNumber});
+
+				}
+
+			});
 
 			return linksCollection;
 
@@ -78,15 +92,17 @@ module.exports = (givenPath, options) => {
 
 			linksCollection.forEach((element) => {
 
-				const matchText = /\[([^[])+\]/giu;
-				linkText = element.match(matchText).toString();
+				let lineNumber = element.lineNumber;
 
-				if ((/http/gi).test(element)) {
+				const matchText = /\[([^[])+\]/giu;
+				linkText = element.matchedLink[0].match(matchText).toString();
+
+				if ((/http/gi).test(element.matchedLink)) {
 
 					const matchURL = /(http|https)+:{1}(\/){2}([\w\-:\.])+[\w\-\/=]*[^ \.]\b/giu;
-					linkUrlString = element.match(matchURL).toString();
+					linkUrlString = element.matchedLink[0].match(matchURL).toString();
 
-					parsedLinksCollection.push({ linkText, linkUrlString });
+					parsedLinksCollection.push({linkText, linkUrlString, lineNumber });
 
 				}
 
@@ -128,7 +144,8 @@ module.exports = (givenPath, options) => {
 							linkText: givenLink.linkText,
 							linkUrlString: givenLink.linkUrlString,
 							statusCode: response.statusCode,
-							statusMessage: response.statusMessage
+							statusMessage: response.statusMessage,
+							lineNumber: givenLink.lineNumber
 
 						};
 
