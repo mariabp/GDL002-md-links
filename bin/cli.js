@@ -13,11 +13,11 @@ const optionTwo = process.argv[4];
 let options = [optionOne, optionTwo];
 
 
-const truncateLinkText = (givenLink) => {
+const truncateLinkText = (link) => {
 
-	if (givenLink.length > 52) {
+	if (link.length > 52) {
 
-		let getText = givenLink.slice(1, 49);
+		let getText = link.slice(1, 49);
 
 		let truncatedText = `[${getText.substring(0, 45)}...]`;
 
@@ -26,7 +26,7 @@ const truncateLinkText = (givenLink) => {
 
 	} else {
 
-		return givenLink;
+		return link;
 
 	}
 
@@ -38,15 +38,19 @@ const printLinks = (givenLinksCollection) => {
 
 	if (givenLinksCollection.isValidate) {
 
+		let truncatedLinkText = "";
+
 		givenLinksCollection.validatedLinksCollection.forEach((element) => {
 
-			let truncatedLinkText = truncateLinkText(element.linkText);
-
 			if (element.error) {
+
+				truncatedLinkText = truncateLinkText(element.givenLink.linkText);
 
 				console.log(`\t--- ERROR --- ${truncatedLinkText} ${element.givenLink.linkUrlString} ( ${element.error} ).\n`);
 
 			} else {
+
+				truncatedLinkText = truncateLinkText(element.linkText);
 
 				console.log(`\t${truncatedLinkText} ${element.linkUrlString} ( ${element.statusCode} ${element.statusMessage} )\n`);
 

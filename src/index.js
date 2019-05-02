@@ -86,7 +86,6 @@ module.exports = (givenPath, options) => {
 					const matchURL = /(http|https)+:{1}(\/){2}([\w\-:\.])+[\w\-\/=]*[^ \.]\b/giu;
 					linkUrlString = element.match(matchURL).toString();
 
-
 					parsedLinksCollection.push({ linkText, linkUrlString });
 
 				}
