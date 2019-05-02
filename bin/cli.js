@@ -15,20 +15,18 @@ let options = [optionOne, optionTwo];
 
 const truncateLinkText = (givenLink) => {
 
-	if (givenLink[0].length > 52) {
+	if (givenLink.length > 52) {
 
-		let regExp = /[^\[]+(?=\])/gi;
+		let getText = givenLink.slice(1, 49);
 
-		let getText = givenLink[0].match(regExp);
-
-		let truncatedText = `[${getText[0].substring(0, 45)}]`;
+		let truncatedText = `[${getText.substring(0, 45)}...]`;
 
 		return truncatedText;
 
 
 	} else {
 
-		return givenLink[0];
+		return givenLink;
 
 	}
 
@@ -36,8 +34,7 @@ const truncateLinkText = (givenLink) => {
 
 const printLinks = (givenLinksCollection) => {
 
-
-	console.log(`\n\t\tPath: ${givenPath}\n`);
+	console.log(`\n\t\t \u001b[1m Path:${givenPath} \x1b[0m\n`);
 
 	if (givenLinksCollection.isValidate) {
 
@@ -59,13 +56,13 @@ const printLinks = (givenLinksCollection) => {
 
 	} else if (givenLinksCollection.isStats) {
 
-		console.log(`\t\t${givenLinksCollection.uniqueLinksCollection.length} unique link(s) found in total.\n`);
+		console.log(`\t\t\u001b[1m${givenLinksCollection.uniqueLinksCollection.length}\x1b[0m unique link(s) found in total.\n`);
 
 	} else if (givenLinksCollection.isValidateStats) {
 
-		console.log(`\t\t${givenLinksCollection.uniqueLinksCollection.length} unique link(s) found in total.\n`);
+		console.log(`\t\t\u001b[1m${givenLinksCollection.uniqueLinksCollection.length}\x1b[0m unique link(s) found in total.\n`);
 
-		console.log(`\t\t${givenLinksCollection.brokenLinksCollection.length} broken link(s) found in total.\n`);
+		console.log(`\t\t\u001b[1m${givenLinksCollection.brokenLinksCollection.length}\x1b[0m broken link(s) found in total.\n`);
 
 	} else {
 
@@ -79,7 +76,7 @@ const printLinks = (givenLinksCollection) => {
 
 	}
 
-	console.log(`\t\t${givenLinksCollection.parsedLinksCollection.length} link(s) found in total.\n`);
+	console.log(`\t\t\u001b[1m${givenLinksCollection.parsedLinksCollection.length}\x1b[0m link(s) found in total.\n`);
 
 };
 

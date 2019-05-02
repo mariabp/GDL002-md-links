@@ -73,16 +73,24 @@ module.exports = (givenPath, options) => {
 
 		const parseLinks = (linksCollection) => {
 
+			let linkText = [];
+			let linkUrlString = [];
+
 			linksCollection.forEach((element) => {
 
 				const matchText = /\[([^[])+\]/giu;
-				let linkText = element.match(matchText);
+				linkText = element.match(matchText).toString();
 
-				const matchURL = /(http|https)+:{1}(\/){2}([\w\-:\.])+[\w\-\/=]*[^ \.]\b/giu;
-				let linkUrlString = element.match(matchURL).toString();
+				if ((/http/gi).test(element)) {
 
-				parsedLinksCollection.push({ linkText, linkUrlString });
+					const matchURL = /(http|https)+:{1}(\/){2}([\w\-:\.])+[\w\-\/=]*[^ \.]\b/giu;
+					linkUrlString = element.match(matchURL).toString();
 
+					console.log(linkText);
+
+					parsedLinksCollection.push({ linkText, linkUrlString });
+
+				}
 
 			});
 
