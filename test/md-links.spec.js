@@ -1,11 +1,10 @@
-require('..functions');
-
+functions = require('../functions');
 
 describe('validatePath', () => {
 
 	it('should return an error if path is undefined', () => {
 
-		validatePath().then(result => {
+		validatePath(givenPath).then(result => {
 
 			expect(result).toBe('\n\tYou must provide a path to a markdown (*.md) file.\n`');
 
