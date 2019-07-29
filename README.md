@@ -123,10 +123,6 @@ El comportamiento por defecto no valida si las URLs responden ok o no, solo debe
 
 argumento), analiza el archivo Markdown e imprimé los links que vaya encontrando, junto con la ruta del archivo donde aparece y el texto que hay dentro del link.
 
-
-
-
-
 #### Options
 
 
@@ -221,13 +217,13 @@ Cuando el usuario ingrese  `{ stats: true }`, filtrará los enlaces que solo apa
 Cuando el usuario ingrese `{ validateStats: true }`, primero hará una rápida validación del estado de los links, luego filtrará los enlaces que aparecen solo una vez, después en otro arreglo, almacenará los enlaces rotos y por último imprimirá el total de enlaces encontrados.
 Esta función retorna cuatro arreglos:   _**parsedLinksCollection**_,  _**validatedLinksCollection**_  ,  _**uniqueLinksCollection**_ y _**brokenLinksCollection**_  que encontró en el respectivo  archivo (*.md).
 
+## Link npm
 
+https://www.npmjs.com/package/mariabp-md-links
 
 ## Diagrama de Flujo Markdown Links
 
 ![Diagrama de flujo md-links](images/md-links.png)
-
-
 
 ## Funciones Markdown Links
 

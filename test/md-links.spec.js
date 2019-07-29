@@ -1,58 +1,29 @@
-functions = require('../functions');
+getBrokenLinks = require('./for-testing');
+parseLinks = require('./for-testing');
+linksCollection = require('./for-testing');
 
-describe('validatePath', () => {
-
-	it('should return an error if path is undefined', () => {
-
-		validatePath(givenPath).then(result => {
-
-			expect(result).toBe('\n\tYou must provide a path to a markdown (*.md) file.\n`');
-
-		});
-
-	});
-
-});
-
-/*
-describe('filterMdFiles', () => {
+describe('getBrokenLinks', () => {
 
 	it('should be a function ', () => {
 
-		console.log('true');
+		expect(typeof (getBrokenLinks)).toBe('function');
 
 	});
 
 });
 
-describe('getFile', () => {
+describe('parseLinks', () => {
 
 	it('should be a function ', () => {
 
-		console.log('file');
+		expect(typeof (parseLinks)).toBe('function');
+
+	});
+
+	it('should return an array of parsed links ', () => {
+
+		expect(parseLinks(linksCollection)).toBe('[]');
 
 	});
 
 });
-
-describe('getLinks', () => {
-
-	it('should be a function ', () => {
-
-		console.log('linkCollection');
-
-	});
-
-});
-
-describe('validateLinks', () => {
-
-	it('should be a function ', () => {
-
-		console.log('validatedLinks');
-
-	});
-
-});
-
-*/
